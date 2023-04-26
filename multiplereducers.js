@@ -1,19 +1,28 @@
 //products constants
 const GET_PRODUCTS = "GET_PRODUCTS";
 const ADD_PRODUCT = "ADD_PRODUCTS";
-//cart constants
-const GET_CART_ITEMS = "GET_CART_ITEMS";
-const ADD_CART_ITEM = "ADD_CART_ITEM";
 
+const { applyMiddleware } = require('redux');
 // Importing createStore and combineReducers functions from redux
 const { createStore, combineReducers } = require("redux");
+const { default: logger } = require('redux-logger');
 
 //product reducer 
 const initialProductState = {
     product: ["sugar", "salt"],
     numberOfProducts: 2
 }
-
+const getProducts = () => {
+    return {
+        type: GET_PRODUCTS,
+    }
+}
+const addProduct = (product) => {
+    return {
+        type: ADD_PRODUCT,
+        payload: product,
+    }
+}
 const productReducer = (state = initialProductState, action) => {
     switch (action.type) {
         case GET_PRODUCTS:
@@ -30,40 +39,18 @@ const productReducer = (state = initialProductState, action) => {
     }
 }
 
-//cart reducer
-const initialCartState = {
-    cart: ["sugar", "salt"],
-    numberOfProducts: 1
-}
 
-const cartReducer = (state = initialCartState, action) => {
-    switch (action.type) {
-        case GET_CART_ITEMS:
-            return {
-                ...state,
-            };
-        case ADD_CART_ITEM:
-            return {
-                cart: [...state.cart, action.payload],
-                numberOfProducts: state.numberOfProducts + 1
-            };
-        default:
-            return state;
-    }
-}
+
 
 const rootReducer = combineReducers({
     product: productReducer,
-    cart: cartReducer
+
 });
 
-const store = createStore(rootReducer);
+const store = createStore(rootReducer, applyMiddleware(logger));
 store.subscribe(() => {
     console.log(store.getState());
 });
 
 store.dispatch(getProducts());
 store.dispatch(addProduct("pen"));
-store.dispatch(getCarts());
-store.dispatch(addCart("banana"));
-store.dispatch(addCart("jackfruit"));
